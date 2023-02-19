@@ -8,3 +8,4 @@
 - [] Set up wallet
 - [] Send transaction from one account to another
 - [] How merkle tree fits into calculating difference
+- [] Sending transaction, signing with private key

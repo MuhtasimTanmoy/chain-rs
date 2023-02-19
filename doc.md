@@ -1,2 +1,0 @@
-## Blockchain Programming from Scratch
-
