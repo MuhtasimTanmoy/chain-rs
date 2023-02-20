@@ -1,12 +1,16 @@
-use std::ptr::hash;
 use std::time::SystemTime;
 use bincode::serialize;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 use log::info;
-use crate::utils::{DIFFICULTY, VERSION};
+use crate::utils::{DIFFICULTY, VERSION, print_bytes};
 
-// Specs available at https://twohop.ventures/wp-content/uploads/2019/12/BSVSpec-Blocks-V1.0.pdf
+enum MiningResponse {
+    success(String),
+    failure,
+}
+
+// specs available at https://twohop.ventures/wp-content/uploads/2019/12/BSVSpec-Blocks-V1.0.pdf
 #[derive(Debug, Clone)]
 pub struct Block {
     timestamp: u128,
@@ -37,6 +41,7 @@ impl Block {
             difficulty: DIFFICULTY,
         };
 
+        block.mine().expect("Mining error");
         Ok(block)
     }
 
@@ -44,18 +49,37 @@ impl Block {
         return self.hash.clone();
     }
 
-    pub fn new_genesis_block() -> Block {
-        Block::new(String::from("Gensis Block"), String::new(), 0).unwrap()
+    pub fn get_height(&self) -> i32 {
+        return self.height;
     }
 
+    pub fn new_genesis_block() -> Block {
+        Block::new(String::from("Genesis Block"), String::new(), 0).unwrap()
+    }
+
+    // https://stackoverflow.com/questions/38215753/how-do-i-implement-copy-and-clone-for-a-type-that-contains-a-string-or-any-type
     fn mine(&mut self) -> Result<(), failure::Error> {
-        info!("Mining the block");
-        while !self.validate()? {
-            self.nonce += 1;
+        loop {
+            match self.validate() {
+                Err(e) => {  }
+                Ok(response) => {
+                    match response {
+                        MiningResponse::success(valid_hash) => {
+                            self.hash =valid_hash;
+                            return Ok(());
+                        }
+                        MiningResponse::failure => self.nonce += 1,
+                    }
+                }
+            }
         }
+
         let data = self.prepare_hash_data()?;
+        // print_bytes(&data);
+        // println!("{:?}", data);
         let mut hasher = Sha256::new();
         hasher.input(&data[..]);
+        println!("{}", hasher.result_str().as_str());
         self.hash = hasher.result_str();
         Ok(())
     }
@@ -72,13 +96,15 @@ impl Block {
         Ok(bytes)
     }
 
-    fn validate(&self) -> Result<bool, failure::Error> {
+    fn validate(&self) ->  Result<MiningResponse, failure::Error> {
         let data = self.prepare_hash_data()?;
         let mut hasher = Sha256::new();
         hasher.input(&data[..]);
+
         let mut vec1: Vec<u8> = vec![];
         vec1.resize(DIFFICULTY as usize, '0' as u8);
-        Ok(&hasher.result_str()[0..DIFFICULTY as usize] == String::from_utf8(vec1)?)
+        let is_found = &hasher.result_str()[0..DIFFICULTY as usize] == String::from_utf8(vec1)?;
+        if is_found { return Ok(MiningResponse::success(hasher.result_str())); }
+        else { return Ok(MiningResponse::failure); }
     }
-
 }

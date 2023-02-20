@@ -1,6 +1,6 @@
 # TODO
 
-- [] Create working chain of blocks
+- [x] Create working chain of blocks
 - [] Save blocks on database
 - [] Set up command line interface
 - [] Set up transaction
