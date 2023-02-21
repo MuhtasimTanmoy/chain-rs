@@ -3,6 +3,7 @@ use bincode::serialize;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 use log::info;
+use serde::{Deserialize, Serialize};
 use crate::utils::{DIFFICULTY, VERSION, print_bytes};
 
 enum MiningResponse {
@@ -11,7 +12,7 @@ enum MiningResponse {
 }
 
 // specs available at https://twohop.ventures/wp-content/uploads/2019/12/BSVSpec-Blocks-V1.0.pdf
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Block {
     timestamp: u128,
     hash: String,
@@ -25,7 +26,6 @@ pub struct Block {
 
 impl Block {
     pub fn new(transactions: String, hash_prev_block: String, height: i32) -> Result<Block, failure::Error> {
-
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)?
             .as_millis();
@@ -40,7 +40,6 @@ impl Block {
             version: VERSION,
             difficulty: DIFFICULTY,
         };
-
         block.mine().expect("Mining error");
         Ok(block)
     }
@@ -48,6 +47,8 @@ impl Block {
     pub fn get_hash(&self) -> String {
         return self.hash.clone();
     }
+
+    pub fn get_prev_block_hash(&self) -> String { return self.hash_prev_block.clone(); }
 
     pub fn get_height(&self) -> i32 {
         return self.height;
@@ -103,6 +104,7 @@ impl Block {
 
         let mut vec1: Vec<u8> = vec![];
         vec1.resize(DIFFICULTY as usize, '0' as u8);
+
         let is_found = &hasher.result_str()[0..DIFFICULTY as usize] == String::from_utf8(vec1)?;
         if is_found { return Ok(MiningResponse::success(hasher.result_str())); }
         else { return Ok(MiningResponse::failure); }

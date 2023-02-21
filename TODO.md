@@ -1,8 +1,8 @@
 # TODO
 
 - [x] Create working chain of blocks
-- [] Save blocks on database
-- [] Set up command line interface
+- [x] Save blocks on database
+- [x] Set up command line interface
 - [] Set up transaction
 - [] Set up genesis block, coinbase transaction
 - [] Set up wallet

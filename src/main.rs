@@ -1,7 +1,13 @@
+use crate::cli::Cli;
+
 mod block;
 mod utils;
 mod blockchain;
+mod blockchain_itr;
+mod cli;
 
-fn main() {
-    println!("Hello, world!");
+fn main() -> Result<(), failure::Error> {
+    let mut cli = Cli::new()?;
+    cli.run()?;
+    Ok(())
 }
