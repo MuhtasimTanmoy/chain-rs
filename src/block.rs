@@ -4,6 +4,7 @@ use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 use log::info;
 use serde::{Deserialize, Serialize};
+use crate::transaction::Transaction;
 use crate::utils::{DIFFICULTY, VERSION, print_bytes};
 
 enum MiningResponse {
@@ -17,7 +18,7 @@ pub struct Block {
     timestamp: u128,
     hash: String,
     hash_prev_block: String,
-    transactions: String, // to be list of transactions
+    transactions: Vec<Transaction>, // to be list of transactions
     nonce: i32,
     height: i32,
     version: i8,
@@ -25,7 +26,10 @@ pub struct Block {
 }
 
 impl Block {
-    pub fn new(transactions: String, hash_prev_block: String, height: i32) -> Result<Block, failure::Error> {
+    pub fn new(transactions: Vec<Transaction>,
+               hash_prev_block: String,
+               height: i32) -> Result<Block, failure::Error> {
+
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)?
             .as_millis();
@@ -44,6 +48,10 @@ impl Block {
         Ok(block)
     }
 
+    pub fn get_transaction(&self) -> &Vec<Transaction> {
+        &self.transactions
+    }
+
     pub fn get_hash(&self) -> String {
         return self.hash.clone();
     }
@@ -54,8 +62,8 @@ impl Block {
         return self.height;
     }
 
-    pub fn new_genesis_block() -> Block {
-        Block::new(String::from("Genesis Block"), String::new(), 0).unwrap()
+    pub fn new_genesis_block(coinbase: Transaction) -> Block {
+        Block::new(vec![coinbase], String::new(), 0).unwrap()
     }
 
     // https://stackoverflow.com/questions/38215753/how-do-i-implement-copy-and-clone-for-a-type-that-contains-a-string-or-any-type
