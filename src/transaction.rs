@@ -1,9 +1,10 @@
+use crate::blockchain::Blockchain;
+use crate::txs::{TXInput, TXOutput};
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 use failure::format_err;
 use log::error;
-use serde::{Serialize,Deserialize};
-use crate::blockchain::Blockchain;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Transaction {
@@ -13,13 +14,20 @@ pub struct Transaction {
 }
 
 impl Transaction {
-
-    pub fn new(from: &str, to: &str, amount: i32, bc: &Blockchain) -> Result<Transaction, failure::Error> {
+    pub fn new(
+        from: &str,
+        to: &str,
+        amount: i32,
+        bc: &Blockchain,
+    ) -> Result<Transaction, failure::Error> {
         let mut input = Vec::new();
         let acc_v = bc.find_spendable_outputs(from, amount);
         if acc_v.0 < amount {
             error!("Not Enough balance");
-            return Err(format_err!("Not Enough balance: current balance {}",acc_v.0));
+            return Err(format_err!(
+                "Not Enough balance: current balance {}",
+                acc_v.0
+            ));
         }
 
         for tx in acc_v.1 {
@@ -84,30 +92,5 @@ impl Transaction {
 
     pub fn is_coinbase(&self) -> bool {
         self.input.len() == 1 && self.input[0].txid.is_empty() && self.input[0].vout == -1
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct TXInput {
-    pub txid: String,
-    pub vout: i32,
-    pub script_sig: String,
-}
-
-impl TXInput {
-    pub fn can_unlock_output_with(&self, unlocking_data: &str) -> bool {
-        self.script_sig == unlocking_data
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct TXOutput {
-    pub value: i32,
-    pub script_pub_key: String,
-}
-
-impl TXOutput {
-    pub fn can_be_unlock_with(&self, unlocking_data: &str) -> bool {
-        self.script_pub_key == unlocking_data
     }
 }

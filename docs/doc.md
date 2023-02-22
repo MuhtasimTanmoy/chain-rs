@@ -16,6 +16,12 @@ block.
 A node is responsible for processing, validating, and relaying the block and its transactions. A
 node is distinct on the network from miners and wallets.
 
+
+## Format
+```
+cargo fix --allow-staged --allow-dirty --all-targets --all-features; cargo fmt; cargo clippy --workspace --all-targets --all-features -- -D warnings
+```
+
 ## Reference
 - [Bitcoin 101 - Merkle Roots and Merkle Trees](https://youtu.be/gUwXCt1qkBU)
 - [Block Spec for Bitcoin](https://twohop.ventures/wp-content/uploads/2019/12/BSVSpec-Blocks-V1.0.pdf)

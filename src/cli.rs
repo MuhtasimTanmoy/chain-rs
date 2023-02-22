@@ -1,7 +1,7 @@
-use std::process::exit;
-use clap::{arg, Command};
 use crate::blockchain::Blockchain;
 use crate::transaction::Transaction;
+use clap::{arg, Command};
+use std::process::exit;
 
 pub struct Cli {}
 
@@ -15,18 +15,16 @@ impl Cli {
             .version("0.1")
             .author("test")
             .about("test")
-            .subcommand(
-                Command::new("printchain")
-                .about("print all the chain blocks"))
+            .subcommand(Command::new("printchain").about("print all the chain blocks"))
             .subcommand(
                 Command::new("getbalance")
-                .about("get balance in the blockchain")
-                .arg(arg!(<ADDRESS>"'The Address it get balance for'"))
+                    .about("get balance in the blockchain")
+                    .arg(arg!(<ADDRESS>"'The Address it get balance for'")),
             )
             .subcommand(
                 Command::new("create")
                     .about("Create new blochain")
-                    .arg(arg!(<ADDRESS>"'The address to send gensis block reqward to' "))
+                    .arg(arg!(<ADDRESS>"'The address to send gensis block reqward to' ")),
             )
             .subcommand(
                 Command::new("send")
@@ -49,7 +47,7 @@ impl Cli {
             if let Some(address) = matches.get_one::<String>("ADDRESS") {
                 let address = String::from(address);
                 let bc = Blockchain::new()?;
-                let utxos = bc.find_UTXO(&address);
+                let utxos = bc.find_utxo(&address);
                 let mut blance = 0;
                 for out in utxos {
                     blance += out.value;
@@ -61,21 +59,21 @@ impl Cli {
         if let Some(ref matches) = matches.subcommand_matches("send") {
             let from = if let Some(address) = matches.get_one::<String>("FROM") {
                 address
-            }else {
+            } else {
                 println!("from not supply!: usage");
                 exit(1)
             };
 
             let to = if let Some(address) = matches.get_one::<String>("TO") {
                 address
-            }else {
+            } else {
                 println!("from not supply!: usage");
                 exit(1)
             };
 
-            let amount: i32 =   if let Some(amount) = matches.get_one::<String>("AMOUNT") {
+            let amount: i32 = if let Some(amount) = matches.get_one::<String>("AMOUNT") {
                 amount.parse()?
-            }else {
+            } else {
                 println!("from not supply!: usage");
                 exit(1)
             };

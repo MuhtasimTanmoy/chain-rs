@@ -25,7 +25,7 @@ impl<'a> Iterator for BlockchainIter<'a> {
                         None
                     }
                 }
-                None => None
+                None => None,
             };
         }
         None

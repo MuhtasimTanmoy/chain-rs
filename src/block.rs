@@ -1,15 +1,15 @@
-use std::time::SystemTime;
 use bincode::serialize;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
-use log::info;
-use serde::{Deserialize, Serialize};
+use std::time::SystemTime;
+
 use crate::transaction::Transaction;
-use crate::utils::{DIFFICULTY, VERSION, print_bytes};
+use crate::utils::{DIFFICULTY, print_bytes, VERSION};
+use serde::{Deserialize, Serialize};
 
 enum MiningResponse {
-    success(String),
-    failure,
+    Success(String),
+    Failure,
 }
 
 // specs available at https://twohop.ventures/wp-content/uploads/2019/12/BSVSpec-Blocks-V1.0.pdf
@@ -26,10 +26,11 @@ pub struct Block {
 }
 
 impl Block {
-    pub fn new(transactions: Vec<Transaction>,
-               hash_prev_block: String,
-               height: i32) -> Result<Block, failure::Error> {
-
+    pub fn new(
+        transactions: Vec<Transaction>,
+        hash_prev_block: String,
+        height: i32,
+    ) -> Result<Block, failure::Error> {
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)?
             .as_millis();
@@ -56,7 +57,9 @@ impl Block {
         return self.hash.clone();
     }
 
-    pub fn get_prev_block_hash(&self) -> String { return self.hash_prev_block.clone(); }
+    pub fn get_prev_block_hash(&self) -> String {
+        return self.hash_prev_block.clone();
+    }
 
     pub fn get_height(&self) -> i32 {
         return self.height;
@@ -70,27 +73,16 @@ impl Block {
     fn mine(&mut self) -> Result<(), failure::Error> {
         loop {
             match self.validate() {
-                Err(e) => {  }
-                Ok(response) => {
-                    match response {
-                        MiningResponse::success(valid_hash) => {
-                            self.hash =valid_hash;
-                            return Ok(());
-                        }
-                        MiningResponse::failure => self.nonce += 1,
+                Err(_e) => {}
+                Ok(response) => match response {
+                    MiningResponse::Success(valid_hash) => {
+                        self.hash = valid_hash;
+                        return Ok(());
                     }
-                }
+                    MiningResponse::Failure => self.nonce += 1,
+                },
             }
         }
-
-        let data = self.prepare_hash_data()?;
-        // print_bytes(&data);
-        // println!("{:?}", data);
-        let mut hasher = Sha256::new();
-        hasher.input(&data[..]);
-        println!("{}", hasher.result_str().as_str());
-        self.hash = hasher.result_str();
-        Ok(())
     }
 
     fn prepare_hash_data(&self) -> Result<Vec<u8>, failure::Error> {
@@ -99,22 +91,26 @@ impl Block {
             self.transactions.clone(),
             self.timestamp,
             DIFFICULTY,
-            self.nonce
+            self.nonce,
         );
         let bytes = serialize(&content)?;
         Ok(bytes)
     }
 
-    fn validate(&self) ->  Result<MiningResponse, failure::Error> {
+    fn validate(&self) -> Result<MiningResponse, failure::Error> {
         let data = self.prepare_hash_data()?;
         let mut hasher = Sha256::new();
         hasher.input(&data[..]);
+        // print_bytes(&data);
 
         let mut vec1: Vec<u8> = vec![];
         vec1.resize(DIFFICULTY as usize, '0' as u8);
 
         let is_found = &hasher.result_str()[0..DIFFICULTY as usize] == String::from_utf8(vec1)?;
-        if is_found { return Ok(MiningResponse::success(hasher.result_str())); }
-        else { return Ok(MiningResponse::failure); }
+        if is_found {
+            return Ok(MiningResponse::Success(hasher.result_str()));
+        } else {
+            return Ok(MiningResponse::Failure);
+        }
     }
 }
