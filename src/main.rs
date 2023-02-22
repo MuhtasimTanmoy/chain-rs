@@ -7,6 +7,8 @@ mod cli;
 mod transaction;
 mod txs;
 mod utils;
+mod wallet;
+mod wallet_chain;
 
 fn main() -> Result<(), failure::Error> {
     let mut cli = Cli::new()?;

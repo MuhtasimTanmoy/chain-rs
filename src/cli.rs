@@ -2,6 +2,7 @@ use crate::blockchain::Blockchain;
 use crate::transaction::Transaction;
 use clap::{arg, Command};
 use std::process::exit;
+use crate::wallet_chain::WalletChain;
 
 pub struct Cli {}
 
@@ -33,6 +34,8 @@ impl Cli {
                     .arg(arg!(<TO>" 'Destination wallet address'"))
                     .arg(arg!(<AMOUNT>" 'Destination wallet address'")),
             )
+            .subcommand(Command::new("createwallet").about("create a wallet"))
+            .subcommand(Command::new("listaddresses").about("list all addresses"))
             .get_matches();
 
         if let Some(ref matches) = matches.subcommand_matches("create") {
@@ -93,6 +96,21 @@ impl Cli {
             }
         }
 
+        if let Some(_) = matches.subcommand_matches("createwallet") {
+            let mut ws = WalletChain::new()?;
+            let address = ws.create_wallet();
+            ws.save_all()?;
+            println!("success: address {}", address);
+        }
+
+        if let Some(_) = matches.subcommand_matches("listaddresses") {
+            let ws = WalletChain::new()?;
+            let addresses = ws.get_all_address();
+            println!("addresses: ");
+            for ad in addresses {
+                println!("{}", ad);
+            }
+        }
         Ok(())
     }
 }
