@@ -100,6 +100,10 @@ mod test {
     /// depreacated
     /// https://github.com/DaGenix/rust-crypto/issues/383#issuecomment-305345044
     /// remove in later versions
+    ///
+    /// Asked a question: https://stackoverflow.com/questions/75530275/undefined-symbols-for-architecture-arm64-rust-crypto-util-fixed-time-eq-asm
+    /// no answer yet
+    /// This test wont work in m1 devices. Error:  Undefined symbols for architecture arm64
     #[test]
     fn test_signature() {
         let w =  Wallet::new();
