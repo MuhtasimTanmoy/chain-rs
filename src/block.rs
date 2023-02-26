@@ -18,7 +18,7 @@ pub struct Block {
     timestamp: u128,
     hash: String,
     hash_prev_block: String,
-    transactions: Vec<Transaction>, // to be list of transactions
+    transactions: Vec<Transaction>,
     nonce: i32,
     height: i32,
     version: i8,
@@ -31,13 +31,14 @@ impl Block {
         hash_prev_block: String,
         height: i32,
     ) -> Result<Block, failure::Error> {
+
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)?
             .as_millis();
 
         let mut block = Block {
             timestamp,
-            hash: "".to_string(),
+            hash: "".to_string(), // set during mining phase
             hash_prev_block,
             transactions,
             nonce: 0,
@@ -54,15 +55,15 @@ impl Block {
     }
 
     pub fn get_hash(&self) -> String {
-        return self.hash.clone();
+         self.hash.clone()
     }
 
     pub fn get_prev_block_hash(&self) -> String {
-        return self.hash_prev_block.clone();
+        self.hash_prev_block.clone()
     }
 
     pub fn get_height(&self) -> i32 {
-        return self.height;
+        self.height
     }
 
     pub fn new_genesis_block(coinbase: Transaction) -> Block {
@@ -97,6 +98,9 @@ impl Block {
         Ok(bytes)
     }
 
+    /// prepares hash data with nonce incremented on each failure
+    /// then matches the first four 4 index of data with
+    /// "0000" as this difficulty is set
     fn validate(&self) -> Result<MiningResponse, failure::Error> {
         let data = self.prepare_hash_data()?;
         let mut hasher = Sha256::new();
@@ -107,10 +111,6 @@ impl Block {
         vec1.resize(DIFFICULTY as usize, '0' as u8);
 
         let is_found = &hasher.result_str()[0..DIFFICULTY as usize] == String::from_utf8(vec1)?;
-        if is_found {
-            return Ok(MiningResponse::Success(hasher.result_str()));
-        } else {
-            return Ok(MiningResponse::Failure);
-        }
+        if is_found { Ok(MiningResponse::Success(hasher.result_str())) } else { Ok(MiningResponse::Failure) }
     }
 }

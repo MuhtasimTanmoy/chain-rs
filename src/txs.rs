@@ -12,7 +12,6 @@ pub struct TXInput {
 }
 
 impl TXInput {
-
     pub fn uses_key(&self, pub_key_hash: &[u8]) -> bool {
         let mut pubkeyhash = self.pub_key.clone();
         hash_pub_key(&mut pubkeyhash);
@@ -27,7 +26,6 @@ pub struct TXOutput {
 }
 
 impl TXOutput {
-
     pub fn is_locked_with_key(&self, pub_key_hash: &[u8]) -> bool {
         self.pub_key_hash == pub_key_hash
     }
