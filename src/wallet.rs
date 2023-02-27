@@ -16,8 +16,7 @@ impl Wallet {
         let mut key: [u8; 32] = [0; 32];
         OsRng.fill_bytes(&mut key);
         let (secrect_key, public_key) = ed25519::keypair(&key);
-        let secret_key = secrect_key.to_vec();
-        let public_key = public_key.to_vec();
+        let (secret_key, public_key)  = (secrect_key.to_vec(), public_key.to_vec());
         Wallet {
             secret_key,
             public_key,

@@ -11,6 +11,7 @@ pub struct TXInput {
     pub pub_key: Vec<u8>,
 }
 
+// recheck the logic
 impl TXInput {
     pub fn uses_key(&self, pub_key_hash: &[u8]) -> bool {
         let mut pubkeyhash = self.pub_key.clone();

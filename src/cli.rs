@@ -52,11 +52,11 @@ impl Cli {
                 let pub_key_hash = Address::decode(address).unwrap().body;
                 let bc = Blockchain::new()?;
                 let utxos = bc.find_utxo(&pub_key_hash);
-                let mut blance = 0;
+                let mut balance = 0;
                 for out in utxos {
-                    blance += out.value;
+                    balance += out.value;
                 }
-                println!("Balance of '{}'; {} ", address, blance)
+                println!("Balance of '{}'; {} ", address, balance)
             }
         }
 
@@ -85,9 +85,6 @@ impl Cli {
             let tx = Transaction::new(from, to, amount, &bc)?;
             bc.add_block(vec![tx])?;
             println!("success!");
-            /*else {
-                println!("Not printing testing lists...");
-            }*/
         }
 
         if let Some(_) = matches.subcommand_matches("printchain") {

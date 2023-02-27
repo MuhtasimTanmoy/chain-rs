@@ -53,6 +53,8 @@ impl Blockchain {
         Ok(bc)
     }
 
+    /// serializes and inserts block into database
+    /// updates the head_hash to point ot this latest block
     pub fn add_block(&mut self, transactions: Vec<Transaction>) -> Result<(), failure::Error> {
         let new_block = Block::new(transactions, self.curr_hash.clone(), 0)?;
         self.db.insert(new_block.get_hash(), bincode::serialize(&new_block)?)?;
@@ -68,21 +70,33 @@ impl Blockchain {
         }
     }
 
+    /// invoked when sending transaction
+    /// gets previous transactions that are present in input of a transaction
+    /// suppose some person get a, b, c transaction accumulating 90 token
+    /// when sending 90 token to someone else the transaction input will
+    /// contain a, b, c
     pub fn sign_transacton(&self, tx: &mut Transaction, private_key: &[u8]) -> Result<(), failure::Error> {
-        let prev_TXs = self.get_prev_txs(tx)?;
-        tx.sign(private_key, prev_TXs)?;
+        let prev_txs = self.get_prev_txs(tx)?;
+        tx.sign(private_key, prev_txs)?;
         Ok(())
     }
 
-    fn get_prev_txs(&self, tx: &Transaction) -> Result<HashMap<String, Transaction>, failure::Error> {
-        let mut prev_TXs = HashMap::new();
-        for vin in &tx.input {
-            let prev_TX = self.find_transaction(&vin.txid)?;
-            prev_TXs.insert(prev_TX.id.clone(), prev_TX);
-        }
-        Ok(prev_TXs)
+    /// verify_transaction verifies transaction input signatures
+    pub fn verify_transaction(&self, tx: &mut Transaction) -> Result<bool, failure::Error> {
+        let prev_txs = self.get_prev_txs(tx)?;
+        tx.verify(prev_txs)
     }
 
+    fn get_prev_txs(&self, tx: &Transaction) -> Result<HashMap<String, Transaction>, failure::Error> {
+        let mut prev_txs = HashMap::new();
+        for vin in &tx.input {
+            let prev_tx = self.find_transaction(&vin.txid)?;
+            prev_txs.insert(prev_tx.id.clone(), prev_tx);
+        }
+        Ok(prev_txs)
+    }
+
+    /// traverses entire blockchain to get specific transaction
     pub fn find_transaction(&self, id: &str) -> Result<Transaction, failure::Error> {
         for b in self.iter() {
             for tx in b.get_transaction() {
@@ -91,13 +105,13 @@ impl Blockchain {
                 }
             }
         }
-        Err(format_err!("Transaction is not found"))
-    }
+        // let tx = self.iter()
+        //     .flat_map(|b| b.get_transaction().into_iter())
+        //     .find(|tx| tx.id == id)
+        //     .cloned()
+        //     .ok_or_else(|| format_err!("Transaction not found"));
 
-    /// VerifyTransaction verifies transaction input signatures
-    pub fn verify_transacton(&self, tx: &mut Transaction) -> Result<bool, failure::Error> {
-        let prev_txs = self.get_prev_txs(tx)?;
-        tx.verify(prev_txs)
+        Err(format_err!("Transaction is not found"))
     }
 }
 

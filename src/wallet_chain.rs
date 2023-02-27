@@ -11,7 +11,6 @@ impl WalletChain {
         let mut wlt = WalletChain {
             wallets: HashMap::<String, Wallet>::new(),
         };
-
         let db = sled::open("data/wallets")?;
         for item in db.into_iter() {
             let i = item?;
@@ -54,7 +53,6 @@ impl WalletChain {
         Ok(())
     }
 }
-
 
 #[cfg(test)]
 mod test {

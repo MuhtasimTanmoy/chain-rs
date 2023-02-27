@@ -18,6 +18,11 @@ pub struct Transaction {
 }
 
 impl Transaction {
+
+    /// when sending a transaction
+    /// first spendable output from an address is taken
+    /// then the input to new transaction will constitute of outputs from previous transactions
+    /// if access amount found the remaining goes back to sender's address
     pub fn new(
         from: &str,
         to: &str,
@@ -49,13 +54,13 @@ impl Transaction {
 
         for tx in acc_v.1 {
             for out in tx.1 {
-                let txin = TXInput {
+                let tx_in = TXInput {
                     txid: tx.0.clone(),
                     vout: out,
-                    signature: Vec::new(),
+                    signature: Vec::new(), // to be filled in sign phase
                     pub_key: wallet.public_key.clone(),
                 };
-                input.push(txin);
+                input.push(tx_in);
             }
         }
 
@@ -73,7 +78,6 @@ impl Transaction {
             input,
             output,
         };
-        // tx.set_id()?;
         tx.id = tx.hash()?;
         bc.sign_transacton(&mut tx,&wallet.secret_key)?;
         Ok(tx)
@@ -83,12 +87,10 @@ impl Transaction {
         if data == String::from("") {
             data += &format!("Reward to '{}'", to);
         }
-
         let walltes = WalletChain::new()?;
         if let None = walltes.get_wallet(&to) {
             return Err(format_err!("coinbase wallet not found"));
         }
-
         let mut tx = Transaction {
             id: String::new(),
             input: vec![TXInput {
@@ -108,10 +110,7 @@ impl Transaction {
     }
 
     pub fn sign(&mut self, private_key: &[u8], prev_TXs: HashMap<String, Transaction>) -> Result<(), failure::Error> {
-
-        if self.is_coinbase() {
-            return Ok(());
-        }
+        if self.is_coinbase() { return Ok(()) }
 
         for vin in &self.input {
             if prev_TXs.get(&vin.txid).unwrap().id.is_empty() {
@@ -128,7 +127,7 @@ impl Transaction {
                 .pub_key_hash
                 .clone();
             tx_copy.id = tx_copy.hash()?;
-            tx_copy.input[in_id].pub_key = Vec::new();
+            // tx_copy.input[in_id].pub_key = Vec::new();
             let signature = ed25519::signature(tx_copy.id.as_bytes(), private_key);
             self.input[in_id].signature = signature.to_vec();
         }
@@ -172,7 +171,6 @@ impl Transaction {
     }
 
     pub fn verify(&mut self, prev_TXs: HashMap<String, Transaction>) -> Result<bool, failure::Error> {
-
         if self.is_coinbase() {
             return Ok(true);
         }

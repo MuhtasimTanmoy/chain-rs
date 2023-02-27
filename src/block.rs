@@ -46,6 +46,7 @@ impl Block {
             version: VERSION,
             difficulty: DIFFICULTY,
         };
+
         block.mine().expect("Mining error");
         Ok(block)
     }
