@@ -10,6 +10,7 @@ mod utils;
 mod wallet;
 mod wallet_chain;
 mod blockchain_unspent_tx;
+mod unspent_tx_util;
 
 fn main() -> Result<(), failure::Error> {
     let mut cli = Cli::new()?;

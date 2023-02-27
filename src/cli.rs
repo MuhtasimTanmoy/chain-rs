@@ -3,6 +3,7 @@ use crate::transaction::Transaction;
 use clap::{arg, Command};
 use std::process::exit;
 use bitcoincash_addr::Address;
+use crate::unspent_tx_util::UnspentTXUtil;
 use crate::wallet_chain::WalletChain;
 
 pub struct Cli {}
@@ -37,6 +38,7 @@ impl Cli {
             )
             .subcommand(Command::new("createwallet").about("create a wallet"))
             .subcommand(Command::new("listaddresses").about("list all addresses"))
+            .subcommand(Command::new("reindex").about("reindex UTXO"))
             .get_matches();
 
         if let Some(ref matches) = matches.subcommand_matches("create") {
@@ -51,9 +53,10 @@ impl Cli {
             if let Some(address) = matches.get_one::<String>("ADDRESS") {
                 let pub_key_hash = Address::decode(address).unwrap().body;
                 let bc = Blockchain::new()?;
-                let utxos = bc.find_utxo(&pub_key_hash);
+                let utxo_util = UnspentTXUtil{chain: bc};
+                let utxos = utxo_util.find_UTXO(&pub_key_hash)?;
                 let mut balance = 0;
-                for out in utxos {
+                for out in utxos.outputs {
                     balance += out.value;
                 }
                 println!("Balance of '{}'; {} ", address, balance)
@@ -81,9 +84,13 @@ impl Cli {
                 println!("from not supply!: usage");
                 exit(1)
             };
+
             let mut bc = Blockchain::new()?;
-            let tx = Transaction::new(from, to, amount, &bc)?;
-            bc.add_block(vec![tx])?;
+            let mut utxo_util = UnspentTXUtil{ chain: bc};
+            let cbtx = Transaction::new_coinbase(from.to_string(), String::from("reward!"))?;
+            let tx = Transaction::new(from, to, amount, &utxo_util)?;
+            let new_block = utxo_util.chain.add_block(vec![cbtx, tx])?;
+            utxo_util.update(&new_block)?;
             println!("success!");
         }
 
@@ -109,6 +116,15 @@ impl Cli {
                 println!("{}", ad);
             }
         }
+
+        if let Some(_) = matches.subcommand_matches("reindex") {
+            let bc = Blockchain::new()?;
+            let utxo_set = UnspentTXUtil { chain: bc };
+            utxo_set.reindex()?;
+            let count = utxo_set.count_transactions()?;
+            println!("Done! There are {} transactions in the UTXO set.", count);
+        }
+
         Ok(())
     }
 }

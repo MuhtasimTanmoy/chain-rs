@@ -7,6 +7,7 @@ use crate::blockchain::Blockchain;
 use crate::blockchain_itr::BlockchainIter;
 use crate::transaction::Transaction;
 use crate::txs::TXOutput;
+use crate::unspent_tx_util::TxOutputs;
 
 impl Blockchain {
     /// find_unspent_transactions returns a list of transactions containing unspent outputs
@@ -41,7 +42,7 @@ impl Blockchain {
         unspend_txs
     }
 
-    /// find_utxo finds and returns all unspent transaction outputs
+    /// find_utxo finds and returns all unspent transaction outputs for an address
     pub fn find_utxo(&self, address: &[u8]) -> Vec<TXOutput> {
         let mut utxos = Vec::<TXOutput>::new();
         let unspend_txs = self.find_unspent_transactions(address);
@@ -53,6 +54,42 @@ impl Blockchain {
             }
         }
         utxos
+    }
+
+    /// find_utxo finds and returns all unspent transaction outputs
+    pub fn find_utxo_all(&self) -> HashMap<String, TxOutputs> {
+        let mut indexed_output: HashMap<String, TxOutputs> = HashMap::new();
+        let mut spent_outputs:  HashMap<String, Vec<i32>> = HashMap::new();
+        for block in self.iter() {
+            for tx in block.get_transaction().iter() {
+                let default_spent_txs = Vec::new();
+                // refactor later, this clone should be replaced with something efficient
+                let spent = spent_outputs.get(&tx.id).unwrap_or(&default_spent_txs).clone();
+                for index in 0..tx.output.len() {
+                    if spent.contains(&(index as i32)) {
+                        continue;
+                    }
+                    match indexed_output.get_mut(&tx.id) {
+                        Some(tx) => { tx.outputs.push(tx.outputs[index].clone()) },
+                        None => {
+                            indexed_output.insert(tx.id.clone(), TxOutputs {
+                                outputs: vec![tx.output[index].clone()]
+                            });
+                        }
+                    }
+                    if tx.is_coinbase() {
+                        continue;
+                    }
+                    for input in &tx.input {
+                        match spent_outputs.get_mut(&input.txid) {
+                            Some(item) => item.push(input.vout),
+                            None => { spent_outputs.insert(tx.id.clone(), vec![input.vout]); }
+                        }
+                    }
+                }
+            }
+        }
+        indexed_output
     }
 
     /// find_spendable_outputs will return the spendable amount and their index

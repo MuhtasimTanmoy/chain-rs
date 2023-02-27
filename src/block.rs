@@ -17,7 +17,7 @@ enum MiningResponse {
 pub struct Block {
     timestamp: u128,
     hash: String,
-    hash_prev_block: String,
+    hash_prev_block: String ,
     transactions: Vec<Transaction>,
     nonce: i32,
     height: i32,

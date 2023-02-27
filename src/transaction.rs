@@ -7,6 +7,7 @@ use crypto::sha2::Sha256;
 use failure::format_err;
 use log::error;
 use serde::{Deserialize, Serialize};
+use crate::unspent_tx_util::UnspentTXUtil;
 use crate::utils::hash_pub_key;
 use crate::wallet_chain::WalletChain;
 
@@ -27,7 +28,7 @@ impl Transaction {
         from: &str,
         to: &str,
         amount: i32,
-        bc: &Blockchain,
+        utxo: &UnspentTXUtil,
     ) -> Result<Transaction, failure::Error> {
 
         let mut wallets = WalletChain::new()?;
@@ -43,7 +44,7 @@ impl Transaction {
         hash_pub_key(&mut pub_key_hash);
 
         let mut input = Vec::new();
-        let acc_v = bc.find_spendable_outputs(&pub_key_hash, amount);
+        let acc_v = utxo.find_spendable_outputs(&pub_key_hash, amount)?;
         if acc_v.0 < amount {
             error!("Not Enough balance");
             return Err(format_err!(
@@ -64,11 +65,7 @@ impl Transaction {
             }
         }
 
-        let mut output = vec![TXOutput::new(
-            amount,
-            to.to_string(),
-        )?];
-
+        let mut output = vec![TXOutput::new(amount,to.to_string())?];
         if acc_v.0 > amount {
             output.push(TXOutput::new(acc_v.0 - amount, from.to_string())?)
         }
@@ -79,7 +76,7 @@ impl Transaction {
             output,
         };
         tx.id = tx.hash()?;
-        bc.sign_transacton(&mut tx,&wallet.secret_key)?;
+        utxo.chain.sign_transacton(&mut tx,&wallet.secret_key)?;
         Ok(tx)
     }
 
