@@ -9,7 +9,7 @@ cargo run create first_user
 cargo run printchain
 
 // should print 100
-cargo run getbalance first_user
+cargo run getbalance 3JGDNu6Pnuench1hoXyibBemfYjGT8RHRS
 Balance of '3JGDNu6Pnuench1hoXyibBemfYjGT8RHRS'; 100 
 
 cargo run addblock tanmoy // deprecated
