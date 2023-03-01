@@ -1,9 +1,8 @@
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 use crypto::digest::Digest;
 use crypto::ripemd160::Ripemd160;
 use crypto::sha2::Sha256;
-
-pub const VERSION: i8 = 1;
-pub const DIFFICULTY: u32 = 4;
 
 pub fn print_bytes(bytes: &[u8]) {
     for b in bytes {

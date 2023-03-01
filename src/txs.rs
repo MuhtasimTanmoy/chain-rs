@@ -1,6 +1,8 @@
 use bitcoincash_addr::Address;
+use ed25519::Signature;
 use log::debug;
 use serde::{Deserialize, Serialize};
+use crate::r#const::SIGNATURE_LEN;
 use crate::utils::hash_pub_key;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

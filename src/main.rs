@@ -9,6 +9,8 @@ mod txs;
 mod utils;
 mod wallet;
 mod wallet_chain;
+mod crypto;
+mod r#const;
 
 fn main() -> Result<(), failure::Error> {
     let mut cli = Cli::new()?;

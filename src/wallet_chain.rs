@@ -60,6 +60,7 @@ impl WalletChain {
 mod test {
     use bitcoincash_addr::Address;
     use crypto::ed25519;
+    use crate::crypto::{SignerUtil, VerifierUtil};
     use crate::utils::hash_pub_key;
     use super::*;
 
@@ -105,13 +106,38 @@ mod test {
     /// no answer yet
     /// This test wont work in m1 devices. Error:  Undefined symbols for architecture arm64
     #[test]
+    fn test_signature_deprecated() {
+        // let w =  Wallet::new();
+        // let signature = ed25519::signature("test".as_bytes(), &w.secret_key);
+        // assert!(ed25519::verify(
+        //     "test".as_bytes(),
+        //     &w.public_key,
+        //     &signature
+        // ));
+    }
+
+
+    #[test]
     fn test_signature() {
+        use ring_compat::signature::{
+            ed25519::{Signature, SigningKey, VerifyingKey},
+            Signer, Verifier
+        };
         let w =  Wallet::new();
-        let signature = ed25519::signature("test".as_bytes(), &w.secret_key);
-        assert!(ed25519::verify(
-            "test".as_bytes(),
-            &w.public_key,
-            &signature
-        ));
+
+        /// `SignerUtil` defined above instantiated with *ring* as
+        /// the signing provider.
+        pub type RingHelloSigner = SignerUtil<SigningKey>;
+
+        let signer = RingHelloSigner { signing_key: w.secret_key };
+        let person = "test";
+        let signature = signer.sign(person);
+
+        /// `VerifierUtil` defined above instantiated with *ring*
+        /// as the signature verification provider.
+        pub type RingHelloVerifier = VerifierUtil<VerifyingKey>;
+
+        let verifier = RingHelloVerifier { verifying_key: w.verifying_key };
+        assert!(verifier.verify(person, &signature).is_ok());
     }
 }
