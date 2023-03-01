@@ -11,6 +11,8 @@ mod wallet;
 mod wallet_chain;
 mod blockchain_unspent_tx;
 mod unspent_tx_util;
+mod crypto;
+mod r#const;
 
 fn main() -> Result<(), failure::Error> {
     let mut cli = Cli::new()?;

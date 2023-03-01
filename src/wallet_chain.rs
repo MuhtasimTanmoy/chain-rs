@@ -58,6 +58,8 @@ impl WalletChain {
 mod test {
     use bitcoincash_addr::Address;
     use crypto::ed25519;
+    use rand_core::{OsRng, RngCore};
+    use crate::crypto::{SignerUtil, VerifierUtil};
     use crate::utils::hash_pub_key;
     use super::*;
 
@@ -103,13 +105,45 @@ mod test {
     /// no answer yet
     /// This test wont work in m1 devices. Error:  Undefined symbols for architecture arm64
     #[test]
+    fn test_signature_deprecated() {
+        // let w =  Wallet::new();
+        // let signature = ed25519::signature("test".as_bytes(), &w.secret_key);
+        // assert!(ed25519::verify(
+        //     "test".as_bytes(),
+        //     &w.public_key,
+        //     &signature
+        // ));
+    }
+
+    #[test]
     fn test_signature() {
-        let w =  Wallet::new();
-        let signature = ed25519::signature("test".as_bytes(), &w.secret_key);
-        assert!(ed25519::verify(
-            "test".as_bytes(),
-            &w.public_key,
-            &signature
-        ));
+        use ring_compat::signature::{
+            ed25519::{Signature, SigningKey, VerifyingKey},
+            Signer, Verifier
+        };
+
+        // wallet should provide the public and private key pair. Accommodate it properly
+        // let w =  Wallet::new();
+
+        let mut ed25519_seed = [0u8; 32];
+        OsRng.fill_bytes(&mut ed25519_seed);
+
+        let signing_key = SigningKey::from_seed(&ed25519_seed).unwrap();
+        let verifying_key = signing_key.verifying_key();
+
+        /// `SignerUtil` defined above instantiated with *ring* as
+        /// the signing provider.
+        pub type RingHelloSigner = SignerUtil<SigningKey>;
+
+        let signer = RingHelloSigner { signing_key };
+        let person = "test";
+        let signature = signer.sign(person);
+
+        /// `VerifierUtil` defined above instantiated with *ring*
+        /// as the signature verification provider.
+        pub type RingHelloVerifier = VerifierUtil<VerifyingKey>;
+
+        let verifier = RingHelloVerifier { verifying_key };
+        assert!(verifier.verify(person, &signature).is_ok());
     }
 }

@@ -84,10 +84,12 @@ impl Transaction {
         if data == String::from("") {
             data += &format!("Reward to '{}'", to);
         }
-        let walltes = WalletChain::new()?;
-        if let None = walltes.get_wallet(&to) {
+
+        let wallets = WalletChain::new()?;
+        if let None = wallets.get_wallet(&to) {
             return Err(format_err!("coinbase wallet not found"));
         }
+
         let mut tx = Transaction {
             id: String::new(),
             input: vec![TXInput {

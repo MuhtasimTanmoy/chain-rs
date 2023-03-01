@@ -4,8 +4,9 @@ use crypto::sha2::Sha256;
 use std::time::SystemTime;
 
 use crate::transaction::Transaction;
-use crate::utils::{DIFFICULTY, print_bytes, VERSION};
+use crate::utils::{print_bytes};
 use serde::{Deserialize, Serialize};
+use crate::r#const::{DIFFICULTY, VERSION};
 
 enum MiningResponse {
     Success(String),
