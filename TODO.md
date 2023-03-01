@@ -6,11 +6,13 @@
 - [x] Set up transaction
 - [x] Set up genesis block, coinbase transaction
 - [x] Set up wallet
-- [x] Send transaction from one account to another
-- [x] Add signature
+- [x] Proof of work mining
+- [x] Send transaction from one account to another with hash of public key as address
+- [x] Add signature for transaction input access control
 - [x] Sending transaction, signing with private key
-- [] How merkle tree fits into calculating difference
-- [] Optimize transaction access, currently traverses the complete chain
+- [x] Use merkle hash for block fingerprint
+- [x] Optimize transaction access, currently traverses the complete chain
+- [x] Add caching layer
 - [] Add networking layer
 - [] Add spec for communication protocol
 - [] Look at transport medium, grpc?
