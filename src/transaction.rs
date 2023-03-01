@@ -84,8 +84,8 @@ impl Transaction {
             data += &format!("Reward to '{}'", to);
         }
 
-        let walltes = WalletChain::new()?;
-        if let None = walltes.get_wallet(&to) {
+        let wallets = WalletChain::new()?;
+        if let None = wallets.get_wallet(&to) {
             return Err(format_err!("coinbase wallet not found"));
         }
 
@@ -102,14 +102,6 @@ impl Transaction {
         tx.id = tx.hash()?;
         Ok(tx)
     }
-
-    // fn set_id(&mut self) -> Result<(), failure::Error> {
-    //     let mut hasher = Sha256::new();
-    //     let data = bincode::serialize(self)?;
-    //     hasher.input(&data);
-    //     self.id = hasher.result_str();
-    //     Ok(())
-    // }
 
     pub fn is_coinbase(&self) -> bool {
         self.input.len() == 1 && self.input[0].txid.is_empty() && self.input[0].vout == -1
@@ -210,7 +202,6 @@ impl Transaction {
                 return Ok(false);
             }
         }
-
         Ok(true)
     }
 }

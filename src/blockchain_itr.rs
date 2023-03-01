@@ -6,12 +6,6 @@ pub struct BlockchainIter<'a> {
     pub(crate) bc: &'a Blockchain,
 }
 
-// impl {
-//     pub fn new(current_hash: String, bc: Blockchain) -> BlockchainIter {
-//
-//     }
-// }
-
 impl<'a> Iterator for BlockchainIter<'a> {
     type Item = Block;
     fn next(&mut self) -> Option<Self::Item> {
