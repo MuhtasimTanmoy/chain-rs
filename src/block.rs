@@ -8,6 +8,10 @@ use crate::utils::{print_bytes};
 use serde::{Deserialize, Serialize};
 use crate::r#const::{DIFFICULTY, VERSION};
 
+use merkle_cbt::merkle_tree::Merge;
+use merkle_cbt::merkle_tree::CBMT;
+use crate::mergetx::MergeTX;
+
 enum MiningResponse {
     Success(String),
     Failure,
@@ -91,13 +95,23 @@ impl Block {
     fn prepare_hash_data(&self) -> Result<Vec<u8>, failure::Error> {
         let content = (
             self.hash_prev_block.clone(),
-            self.transactions.clone(),
+            self.hash_transactions()?,
             self.timestamp,
             DIFFICULTY,
             self.nonce,
         );
         let bytes = serialize(&content)?;
         Ok(bytes)
+    }
+
+    /// HashTransactions returns a hash of the transactions in the block
+    fn hash_transactions(&self) -> Result<Vec<u8>, failure::Error> {
+        let mut transactions = Vec::new();
+        for tx in self.transactions.iter() {
+            transactions.push(tx.hash()?.as_bytes().to_owned());
+        }
+        let tree = CBMT::<Vec<u8>, MergeTX>::build_merkle_tree(&*transactions);
+        Ok(tree.root())
     }
 
     /// prepares hash data with nonce incremented on each failure

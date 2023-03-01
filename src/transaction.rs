@@ -161,8 +161,7 @@ impl Transaction {
         }
     }
 
-    fn hash(&mut self) -> Result<String, failure::Error> {
-        self.id = String::new();
+    pub(crate) fn hash(&self) -> Result<String, failure::Error> {
         let data = bincode::serialize(self)?;
         let mut hasher = Sha256::new();
         hasher.input(&data[..]);
