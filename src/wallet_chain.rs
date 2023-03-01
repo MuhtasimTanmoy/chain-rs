@@ -60,6 +60,7 @@ impl WalletChain {
 mod test {
     use bitcoincash_addr::Address;
     use crypto::ed25519;
+    use rand_core::{OsRng, RngCore};
     use crate::crypto::{SignerUtil, VerifierUtil};
     use crate::utils::hash_pub_key;
     use super::*;
@@ -123,13 +124,21 @@ mod test {
             ed25519::{Signature, SigningKey, VerifyingKey},
             Signer, Verifier
         };
-        let w =  Wallet::new();
+
+        // wallet should provide the public and private key pair. Accommodate it properly
+        // let w =  Wallet::new();
+
+        let mut ed25519_seed = [0u8; 32];
+        OsRng.fill_bytes(&mut ed25519_seed);
+
+        let signing_key = SigningKey::from_seed(&ed25519_seed).unwrap();
+        let verifying_key = signing_key.verifying_key();
 
         /// `SignerUtil` defined above instantiated with *ring* as
         /// the signing provider.
         pub type RingHelloSigner = SignerUtil<SigningKey>;
 
-        let signer = RingHelloSigner { signing_key: w.secret_key };
+        let signer = RingHelloSigner { signing_key };
         let person = "test";
         let signature = signer.sign(person);
 
@@ -137,7 +146,7 @@ mod test {
         /// as the signature verification provider.
         pub type RingHelloVerifier = VerifierUtil<VerifyingKey>;
 
-        let verifier = RingHelloVerifier { verifying_key: w.verifying_key };
+        let verifier = RingHelloVerifier { verifying_key };
         assert!(verifier.verify(person, &signature).is_ok());
     }
 }
