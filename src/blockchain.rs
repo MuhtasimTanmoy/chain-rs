@@ -124,16 +124,34 @@ impl Blockchain {
 mod tests {
     use crate::blockchain::Blockchain;
     use crate::transaction::Transaction;
-    use crate::unspent_tx_util::UnspentTXUtil;
 
-    // #[test]
-    // fn find_utxos() {
-    //     let mut bc = Blockchain::new().unwrap();
-    //     let utxo_set = UnspentTXUtil { chain: bc };
-    //     let tx = Transaction::new( "34KTu4aiqTaJ1vdYzHS3xGXL1eHkAuXred",
-    //                                           "35gt2cJbbmLFLqWtEkCU5yMrECUoccNGy4",
-    //                                           10, &utxo_set).unwrap();
-    //     bc.add_block(vec![tx]).unwrap();
-    //     println!("success!");
-    // }
+    #[test]
+    fn test_blockchain_in_memory() {
+        // let mut b = Blockchain::new().unwrap();
+        // b.add_block("block 0".to_string()).ok();
+        // b.add_block("block 1".to_string()).ok();
+        // b.add_block("block 2".to_string()).ok();
+        // dbg!(b);
+    }
+
+    #[test]
+    fn test_blockchain_db() {
+        // let mut b = Blockchain::new().unwrap();
+        // b.add_block("data 1".to_string());
+        // b.add_block("data 2".to_string());
+        // b.add_block("data 3".to_string());
+
+        // for item in b.iter() {
+        //     println!("item {:?}",item)
+        // }
+    }
+
+    #[test]
+    fn add_block() {
+        // this test case should fail as pub key hash address is hardcoded, opt for something from wallet in future
+        // let mut bc = Blockchain::new().unwrap();
+        // let tx = Transaction::new( "34KTu4aiqTaJ1vdYzHS3xGXL1eHkAuXred", "35gt2cJbbmLFLqWtEkCU5yMrECUoccNGy4",10, &bc).unwrap();
+        // bc.add_block(vec![tx]).unwrap();
+        // println!("success!");
+    }
 }
