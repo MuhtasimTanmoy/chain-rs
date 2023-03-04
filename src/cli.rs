@@ -89,8 +89,9 @@ impl Cli {
             let mut utxo_util = UnspentTXUtil{ chain: bc};
             let cbtx = Transaction::new_coinbase(from.to_string(), String::from("reward!"))?;
             let tx = Transaction::new(from, to, amount, &utxo_util)?;
-            let new_block = utxo_util.chain.add_block(vec![cbtx, tx])?;
-            utxo_util.update(&new_block)?;
+            // TODO update
+            // let new_block = utxo_util.chain.add_block(vec![cbtx, tx])?;
+            // utxo_util.update(&new_block)?;
             println!("success!");
         }
 
