@@ -138,3 +138,4 @@ Nodes will communicate with each other with following types of messages
 - https://input-output-hk.github.io/jormungandr
 - https://github.com/JoshOrndorff/blockchain-from-scratch
 - https://github.com/jean553/rust-blockchain
+- https://github.com/cosme12/SimpleCoin
