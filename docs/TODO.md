@@ -13,7 +13,8 @@
 - [x] Use merkle hash for block fingerprint
 - [x] Optimize transaction access, currently traverses the complete chain
 - [x] Add caching layer
-- [] Add networking layer
+- [x] Add networking layer
+- [] Restructure the project to use different crate for each functionality
 - [] Add spec for communication protocol
 - [] Look at transport medium, grpc?
 - [] Add separate client to interact with full node

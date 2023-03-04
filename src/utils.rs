@@ -1,8 +1,5 @@
-use std::error::Error;
-use std::fmt::{Display, Formatter};
 use crypto::digest::Digest;
 use crypto::ripemd160::Ripemd160;
-use crypto::sha2::Sha256;
 
 pub fn print_bytes(bytes: &[u8]) {
     for b in bytes {
@@ -10,7 +7,6 @@ pub fn print_bytes(bytes: &[u8]) {
     }
     println!("");
 }
-
 
 pub fn hash_pub_key(pub_key: &mut Vec<u8>) {
     // let mut hasher1 = Sha256::new();

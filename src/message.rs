@@ -1,8 +1,8 @@
 use std::fmt::{Display, Formatter};
-use clap::builder::Str;
-use serde::{Deserialize, Serialize};
+
 use crate::block::Block;
 use crate::transaction::Transaction;
+use serde::{Deserialize, Serialize};
 
 // Improvements
 // Remove pub(crate) in struct fields, dont know yet how to properly structure
@@ -21,7 +21,7 @@ pub enum Message {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BlockMessage {
     pub(crate) from: String,
-    pub(crate) block: Block
+    pub(crate) block: Block,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -31,7 +31,9 @@ pub struct GetBlockMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum DataRequestType {
-    Block, Data, TX
+    Block,
+    Data,
+    TX,
 }
 
 impl Display for DataRequestType {
@@ -74,4 +76,3 @@ pub struct VersionMessage {
     pub(crate) version: i32,
     pub(crate) height: i32,
 }
-

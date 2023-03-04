@@ -1,12 +1,11 @@
-use log::info;
-use std::collections::HashMap;
 use bincode::{deserialize, serialize};
 use failure::format_err;
+use log::info;
+use std::collections::HashMap;
 
 use crate::block::Block;
 use crate::blockchain_itr::BlockchainIter;
 use crate::transaction::Transaction;
-use crate::txs::TXOutput;
 
 const GENESIS_COINBASE_DATA: &str = "Some data for genesis block";
 
@@ -17,7 +16,6 @@ pub struct Blockchain {
 }
 
 impl Blockchain {
-
     /// the last block hash is stored in DB
     /// after this value is accessed
     /// we can traverse through all subsequent blocks via hash_prev_block
@@ -39,14 +37,14 @@ impl Blockchain {
     /// creates the genesis block with coinbase transaction
     /// persists in database
     pub fn create_blockchain(address: String) -> Result<Blockchain, failure::Error> {
-
-        if let Err(e) = std::fs::remove_dir_all("data/blocks") {
+        if let Err(_e) = std::fs::remove_dir_all("data/blocks") {
             info!("bloks not exist to delete")
         }
 
         let db = sled::open("data/blocks")?;
 
-        let coinbase_transaction = Transaction::new_coinbase(address, String::from(GENESIS_COINBASE_DATA))?;
+        let coinbase_transaction =
+            Transaction::new_coinbase(address, String::from(GENESIS_COINBASE_DATA))?;
         let genesis: Block = Block::new_genesis_block(coinbase_transaction);
         db.insert(genesis.get_hash(), bincode::serialize(&genesis)?)?;
         db.insert("block_head_hash", genesis.get_hash().as_bytes())?;
@@ -81,7 +79,11 @@ impl Blockchain {
     /// suppose some person get a, b, c transaction accumulating 90 token
     /// when sending 90 token to someone else the transaction input will
     /// contain a, b, c
-    pub fn sign_transacton(&self, tx: &mut Transaction, private_key: &[u8]) -> Result<(), failure::Error> {
+    pub fn sign_transacton(
+        &self,
+        tx: &mut Transaction,
+        private_key: &[u8],
+    ) -> Result<(), failure::Error> {
         let prev_txs = self.get_prev_txs(tx)?;
         tx.sign(private_key, prev_txs)?;
         Ok(())
@@ -93,7 +95,10 @@ impl Blockchain {
         tx.verify(prev_txs)
     }
 
-    fn get_prev_txs(&self, tx: &Transaction) -> Result<HashMap<String, Transaction>, failure::Error> {
+    fn get_prev_txs(
+        &self,
+        tx: &Transaction,
+    ) -> Result<HashMap<String, Transaction>, failure::Error> {
         let mut prev_txs = HashMap::new();
         for vin in &tx.input {
             let prev_tx = self.find_transaction(&vin.txid)?;
@@ -153,7 +158,10 @@ impl Blockchain {
         tx.verify(prev_TXs)
     }
 
-    fn get_prev_TXs(&self, tx: &Transaction) -> Result<HashMap<String, Transaction>, failure::Error> {
+    fn get_prev_TXs(
+        &self,
+        tx: &Transaction,
+    ) -> Result<HashMap<String, Transaction>, failure::Error> {
         let mut prev_TXs = HashMap::new();
         for vin in &tx.input {
             let prev_TX = self.find_transacton(&vin.txid)?;
@@ -216,8 +224,6 @@ impl Blockchain {
 
 #[cfg(test)]
 mod tests {
-    use crate::blockchain::Blockchain;
-    use crate::transaction::Transaction;
 
     #[test]
     fn test_blockchain_in_memory() {

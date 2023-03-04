@@ -2,13 +2,12 @@ use std::collections::{HashMap, HashSet};
 use std::io::{Read, Write};
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
-use bincode::{deserialize, serialize};
-use failure::format_err;
+
 use log::info;
-use crate::block::Block;
+
 use crate::message::Message;
 use crate::parser_util::bytes_to_cmd;
-use crate::r#const::{ADDRESS, CMD_LEN, VERSION};
+use crate::r#const::ADDRESS;
 use crate::transaction::Transaction;
 use crate::unspent_tx_util::UnspentTXUtil;
 
@@ -22,11 +21,11 @@ pub struct NetworkMetadata {
 pub struct Node {
     pub(crate) address: String,
     pub(crate) miner_address: String,
-    pub(crate) metadata: Arc<Mutex<NetworkMetadata>>
+    pub(crate) metadata: Arc<Mutex<NetworkMetadata>>,
 }
 
 impl Node {
-    fn new(port: &str, miner_address: &str, utxo: UnspentTXUtil) -> Result<Node, failure::Error> {
+    fn new(_port: &str, _miner_address: &str, utxo: UnspentTXUtil) -> Result<Node, failure::Error> {
         let mut node_set = HashSet::new();
         node_set.insert(String::from(ADDRESS));
         let server = Node {

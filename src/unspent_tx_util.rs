@@ -1,11 +1,11 @@
-use std::collections::HashMap;
-use std::fs::remove_dir_all;
-use serde::Deserialize;
-use turbosql::Serialize;
 use crate::block::Block;
 use crate::blockchain::Blockchain;
 use crate::txs::TXOutput;
 use bincode::{deserialize, serialize};
+use serde::Deserialize;
+use std::collections::HashMap;
+use std::fs::remove_dir_all;
+use turbosql::Serialize;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TxOutputs {
@@ -32,7 +32,7 @@ impl UnspentTXUtil {
         for tx in block.get_transaction() {
             if !tx.is_coinbase() {
                 for vin in &tx.input {
-                    let mut updated_outputs = TxOutputs { outputs: vec![], };
+                    let mut updated_outputs = TxOutputs { outputs: vec![] };
                     let outs: TxOutputs = deserialize(&db.get(&vin.txid)?.unwrap().to_vec())?;
                     for idx in 0..outs.outputs.len() {
                         if idx != vin.vout as usize {

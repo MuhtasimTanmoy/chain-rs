@@ -1,10 +1,10 @@
 use crate::blockchain::Blockchain;
 use crate::transaction::Transaction;
-use clap::{arg, Command};
-use std::process::exit;
-use bitcoincash_addr::Address;
 use crate::unspent_tx_util::UnspentTXUtil;
 use crate::wallet_chain::WalletChain;
+use bitcoincash_addr::Address;
+use clap::{arg, Command};
+use std::process::exit;
 
 pub struct Cli {}
 
@@ -53,7 +53,7 @@ impl Cli {
             if let Some(address) = matches.get_one::<String>("ADDRESS") {
                 let pub_key_hash = Address::decode(address).unwrap().body;
                 let bc = Blockchain::new()?;
-                let utxo_util = UnspentTXUtil{chain: bc};
+                let utxo_util = UnspentTXUtil { chain: bc };
                 let utxos = utxo_util.find_UTXO(&pub_key_hash)?;
                 let mut balance = 0;
                 for out in utxos.outputs {
@@ -85,10 +85,10 @@ impl Cli {
                 exit(1)
             };
 
-            let mut bc = Blockchain::new()?;
-            let mut utxo_util = UnspentTXUtil{ chain: bc};
-            let cbtx = Transaction::new_coinbase(from.to_string(), String::from("reward!"))?;
-            let tx = Transaction::new(from, to, amount, &utxo_util)?;
+            let bc = Blockchain::new()?;
+            let utxo_util = UnspentTXUtil { chain: bc };
+            let _cbtx = Transaction::new_coinbase(from.to_string(), String::from("reward!"))?;
+            let _tx = Transaction::new(from, to, amount, &utxo_util)?;
             // TODO update
             // let new_block = utxo_util.chain.add_block(vec![cbtx, tx])?;
             // utxo_util.update(&new_block)?;

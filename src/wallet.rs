@@ -1,9 +1,9 @@
+use crate::utils::hash_pub_key;
 use bitcoincash_addr::{Address, HashType, Scheme};
 use crypto::ed25519;
-use rand::RngCore;
 use rand::rngs::OsRng;
-use serde::{Serialize, Deserialize};
-use crate::utils::hash_pub_key;
+use rand::RngCore;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Wallet {
@@ -16,7 +16,7 @@ impl Wallet {
         let mut key: [u8; 32] = [0; 32];
         OsRng.fill_bytes(&mut key);
         let (secrect_key, public_key) = ed25519::keypair(&key);
-        let (secret_key, public_key)  = (secrect_key.to_vec(), public_key.to_vec());
+        let (secret_key, public_key) = (secrect_key.to_vec(), public_key.to_vec());
         Wallet {
             secret_key,
             public_key,

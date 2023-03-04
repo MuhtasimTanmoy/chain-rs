@@ -1,8 +1,11 @@
-use log::{debug, info};
-use crate::message::{BlockMessage, DataRequestType, GetBlockMessage, GetDataMessage, InventoryMessage, TxMessage, VersionMessage};
-use crate::r#const::ADDRESS;
+use crate::message::{
+    BlockMessage, DataRequestType, GetBlockMessage, GetDataMessage, InventoryMessage, TxMessage,
+    VersionMessage,
+};
 use crate::node::Node;
+use crate::r#const::ADDRESS;
 use crate::transaction::Transaction;
+use log::{debug, info};
 
 impl Node {
     pub(crate) fn handle_version(&self, msg: VersionMessage) -> Result<(), failure::Error> {
@@ -31,11 +34,7 @@ impl Node {
     }
 
     pub(crate) fn handle_block(&self, msg: BlockMessage) -> Result<(), failure::Error> {
-        info!(
-            "receive block msg: {}, {}",
-            msg.from,
-            msg.block.get_hash()
-        );
+        info!("receive block msg: {}, {}", msg.from, msg.block.get_hash());
         self.add_block(msg.block)?;
 
         let mut in_transit = self.get_in_transit();
@@ -91,7 +90,7 @@ impl Node {
             DataRequestType::Block => {
                 let block = self.get_block(&msg.id)?;
                 self.send_block(&msg.from, &block)?;
-            },
+            }
             DataRequestType::TX => {
                 let tx = self.get_mempool_tx(&msg.id).unwrap();
                 self.send_tx(&msg.from, &tx)?;

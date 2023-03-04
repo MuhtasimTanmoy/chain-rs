@@ -1,14 +1,16 @@
-use bincode::serialize;
-use log::info;
 use crate::block::Block;
-use crate::message::{BlockMessage, DataRequestType, GetBlockMessage, GetDataMessage, InventoryMessage, TxMessage, VersionMessage};
-use crate::r#const::VERSION;
+use crate::message::{
+    BlockMessage, DataRequestType, GetBlockMessage, GetDataMessage, InventoryMessage, TxMessage,
+    VersionMessage,
+};
 use crate::node::Node;
 use crate::parser_util::cmd_to_bytes;
+use crate::r#const::VERSION;
 use crate::transaction::Transaction;
+use bincode::serialize;
+use log::info;
 
 impl Node {
-
     pub(crate) fn send_block(&self, addr: &str, b: &Block) -> Result<(), failure::Error> {
         info!("send block data to: {} block hash: {}", addr, b.get_hash());
         let data = BlockMessage {
@@ -26,7 +28,12 @@ impl Node {
         self.send_data(addr, &data)
     }
 
-    pub(crate) fn send_inv(&self, addr: &str, kind: &str, items: Vec<String>) -> Result<(), failure::Error> {
+    pub(crate) fn send_inv(
+        &self,
+        addr: &str,
+        kind: &str,
+        items: Vec<String>,
+    ) -> Result<(), failure::Error> {
         info!(
             "send inv message to: {} kind: {} data: {:?}",
             addr, kind, items
@@ -49,7 +56,12 @@ impl Node {
         self.send_data(addr, &data)
     }
 
-    pub(crate) fn send_get_data(&self, addr: &str, kind: DataRequestType, id: &str) -> Result<(), failure::Error> {
+    pub(crate) fn send_get_data(
+        &self,
+        addr: &str,
+        kind: DataRequestType,
+        id: &str,
+    ) -> Result<(), failure::Error> {
         info!(
             "send get data message to: {} kind: {} id: {}",
             addr, kind, id
@@ -84,4 +96,3 @@ impl Node {
         self.send_data(addr, &data)
     }
 }
-

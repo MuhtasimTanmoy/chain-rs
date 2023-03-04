@@ -1,10 +1,7 @@
-use log::info;
 use std::collections::HashMap;
-use failure::format_err;
 
-use crate::block::Block;
 use crate::blockchain::Blockchain;
-use crate::blockchain_itr::BlockchainIter;
+
 use crate::transaction::Transaction;
 use crate::txs::TXOutput;
 use crate::unspent_tx_util::TxOutputs;
@@ -25,15 +22,23 @@ impl Blockchain {
                 let default_spent_txs = Vec::new();
                 let already_spent = spent_txs.get(&tx.id).unwrap_or(&default_spent_txs);
                 for index in 0..tx.output.len() {
-                    if already_spent.contains(&(index as i32)) { continue; }
-                    if tx.output[index].is_locked_with_key(pub_key_hash) { unspend_txs.push(tx.to_owned()) }
+                    if already_spent.contains(&(index as i32)) {
+                        continue;
+                    }
+                    if tx.output[index].is_locked_with_key(pub_key_hash) {
+                        unspend_txs.push(tx.to_owned())
+                    }
                 }
-                if tx.is_coinbase() { continue; }
+                if tx.is_coinbase() {
+                    continue;
+                }
                 for i in &tx.input {
                     if i.uses_key(pub_key_hash) {
                         match spent_txs.get_mut(&i.txid) {
                             Some(v) => v.push(i.vout),
-                            None => { spent_txs.insert(i.txid.clone(), vec![i.vout]); }
+                            None => {
+                                spent_txs.insert(i.txid.clone(), vec![i.vout]);
+                            }
                         }
                     }
                 }
@@ -59,22 +64,28 @@ impl Blockchain {
     /// find_utxo finds and returns all unspent transaction outputs
     pub fn find_utxo_all(&self) -> HashMap<String, TxOutputs> {
         let mut indexed_output: HashMap<String, TxOutputs> = HashMap::new();
-        let mut spent_outputs:  HashMap<String, Vec<i32>> = HashMap::new();
+        let mut spent_outputs: HashMap<String, Vec<i32>> = HashMap::new();
         for block in self.iter() {
             for tx in block.get_transaction().iter() {
                 let default_spent_txs = Vec::new();
                 // refactor later, this clone should be replaced with something efficient
-                let spent = spent_outputs.get(&tx.id).unwrap_or(&default_spent_txs).clone();
+                let spent = spent_outputs
+                    .get(&tx.id)
+                    .unwrap_or(&default_spent_txs)
+                    .clone();
                 for index in 0..tx.output.len() {
                     if spent.contains(&(index as i32)) {
                         continue;
                     }
                     match indexed_output.get_mut(&tx.id) {
-                        Some(tx) => { tx.outputs.push(tx.outputs[index].clone()) },
+                        Some(tx) => tx.outputs.push(tx.outputs[index].clone()),
                         None => {
-                            indexed_output.insert(tx.id.clone(), TxOutputs {
-                                outputs: vec![tx.output[index].clone()]
-                            });
+                            indexed_output.insert(
+                                tx.id.clone(),
+                                TxOutputs {
+                                    outputs: vec![tx.output[index].clone()],
+                                },
+                            );
                         }
                     }
                     if tx.is_coinbase() {
@@ -83,7 +94,9 @@ impl Blockchain {
                     for input in &tx.input {
                         match spent_outputs.get_mut(&input.txid) {
                             Some(item) => item.push(input.vout),
-                            None => { spent_outputs.insert(tx.id.clone(), vec![input.vout]); }
+                            None => {
+                                spent_outputs.insert(tx.id.clone(), vec![input.vout]);
+                            }
                         }
                     }
                 }

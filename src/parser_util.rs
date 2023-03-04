@@ -1,8 +1,11 @@
+use crate::message::{
+    BlockMessage, GetBlockMessage, GetDataMessage, InventoryMessage, Message, TxMessage,
+    VersionMessage,
+};
+use crate::r#const::CMD_LEN;
 use bincode::deserialize;
 use failure::format_err;
 use log::info;
-use crate::message::{BlockMessage, GetBlockMessage, GetDataMessage, InventoryMessage, Message, TxMessage, VersionMessage};
-use crate::r#const::CMD_LEN;
 
 pub fn bytes_to_cmd(bytes: &[u8]) -> Result<Message, failure::Error> {
     let mut cmd = Vec::new();

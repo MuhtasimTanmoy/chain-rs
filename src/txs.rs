@@ -1,8 +1,8 @@
 use bitcoincash_addr::Address;
-use ed25519::Signature;
+
 use log::debug;
 use serde::{Deserialize, Serialize};
-use crate::r#const::SIGNATURE_LEN;
+
 use crate::utils::hash_pub_key;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -44,7 +44,7 @@ impl TXOutput {
 
     fn lock(&mut self, address: &str) -> Result<(), failure::Error> {
         let pub_key_hash = Address::decode(address).unwrap().body;
-        debug!("lock,{}",address);
+        debug!("lock,{}", address);
         self.pub_key_hash = pub_key_hash;
         Ok(())
     }

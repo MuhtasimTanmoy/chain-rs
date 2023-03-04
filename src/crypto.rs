@@ -2,14 +2,16 @@ use ed25519::signature::{Signer, Verifier};
 use ring_compat::signature::ed25519::{SigningKey, VerifyingKey};
 
 pub struct SignerUtil<S>
-    where
-        S: Signer<ed25519::Signature> {
-    pub signing_key: S
+where
+    S: Signer<ed25519::Signature>,
+{
+    pub signing_key: S,
 }
 
 impl<S> SignerUtil<S>
-    where
-        S: Signer<ed25519::Signature> {
+where
+    S: Signer<ed25519::Signature>,
+{
     pub fn sign(&self, person: &str) -> ed25519::Signature {
         // NOTE: use `try_sign` if you'd like to be able to handle
         // errors from external signing services/devices (e.g. HSM/KMS)
@@ -19,18 +21,20 @@ impl<S> SignerUtil<S>
 }
 
 pub struct VerifierUtil<V> {
-    pub verifying_key: V
+    pub verifying_key: V,
 }
 
 impl<V> VerifierUtil<V>
-    where
-        V: Verifier<ed25519::Signature> {
+where
+    V: Verifier<ed25519::Signature>,
+{
     pub fn verify(
         &self,
         person: &str,
-        signature: &ed25519::Signature
+        signature: &ed25519::Signature,
     ) -> Result<(), ed25519::Error> {
-        self.verifying_key.verify(format_message(person).as_bytes(), signature)
+        self.verifying_key
+            .verify(format_message(person).as_bytes(), signature)
     }
 }
 

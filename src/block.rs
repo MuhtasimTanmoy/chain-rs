@@ -4,13 +4,12 @@ use crypto::sha2::Sha256;
 use std::time::SystemTime;
 
 use crate::transaction::Transaction;
-use crate::utils::{print_bytes};
-use serde::{Deserialize, Serialize};
-use crate::r#const::{DIFFICULTY, VERSION};
 
-use merkle_cbt::merkle_tree::Merge;
-use merkle_cbt::merkle_tree::CBMT;
+use crate::r#const::{DIFFICULTY, VERSION};
+use serde::{Deserialize, Serialize};
+
 use crate::mergetx::MergeTX;
+use merkle_cbt::merkle_tree::CBMT;
 
 enum MiningResponse {
     Success(String),
@@ -22,7 +21,7 @@ enum MiningResponse {
 pub struct Block {
     timestamp: u128,
     hash: String,
-    hash_prev_block: String ,
+    hash_prev_block: String,
     transactions: Vec<Transaction>,
     nonce: i32,
     height: i32,
@@ -36,7 +35,6 @@ impl Block {
         hash_prev_block: String,
         height: i32,
     ) -> Result<Block, failure::Error> {
-
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)?
             .as_millis();
@@ -61,7 +59,7 @@ impl Block {
     }
 
     pub fn get_hash(&self) -> String {
-         self.hash.clone()
+        self.hash.clone()
     }
 
     pub fn get_prev_block_hash(&self) -> String {
@@ -127,6 +125,10 @@ impl Block {
         vec1.resize(DIFFICULTY as usize, '0' as u8);
 
         let is_found = &hasher.result_str()[0..DIFFICULTY as usize] == String::from_utf8(vec1)?;
-        if is_found { Ok(MiningResponse::Success(hasher.result_str())) } else { Ok(MiningResponse::Failure) }
+        if is_found {
+            Ok(MiningResponse::Success(hasher.result_str()))
+        } else {
+            Ok(MiningResponse::Failure)
+        }
     }
 }
