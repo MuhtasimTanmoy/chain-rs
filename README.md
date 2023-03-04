@@ -26,10 +26,10 @@ Feel free to give any idea/ suggestions on improvement.
 - [x] Optimize transaction access, currently traverses the complete chain
 - [x] Add caching layer
 - [x] Add networking layer
-- [] Restructure the project to use different crate for each functionality
-- [] Add spec for communication protocol
-- [] Look at transport medium, grpc?
-- [] Add separate client to interact with full node
+-  Restructure the project to use different crate for each functionality
+- Add spec for communication protocol
+- Look at transport medium, grpc?
+- Add separate client to interact with full node
 
 ### Usage
 
@@ -70,6 +70,18 @@ Balance of '3JGDNu6Pnuench1hoXyibBemfYjGT8RHRS'; 100
 ## Send money to from one user to another
 cargo run send 3JGDNu6Pnuench1hoXyibBemfYjGT8RHRS  36M6fHwAame68se5hhqG1j2kXRujFCDQhN 10
 ```
+
+### Docs
+Courtesy to ChatGPT project for assistance with wordings in this documentation.
+
+- [Wiki](./docs/wiki.md)
+- [Doc](./docs/doc.md)
+- [Messages](./docs/message.md)
+- [Networking](./docs/networking.md)
+- [Command Line](./docs/cli.md)
+- [Analysis](./docs/analysis.md)
+- [Todo](./docs/TODO.md)
+- [Changelog](./docs/changelog.md)
 
 ### Concepts
 
@@ -114,19 +126,7 @@ Nodes will communicate with each other with following types of messages
 - `VersionMessage`
     - Nodes version transfer message
 
-### Docs
-- [Wiki](./docs/wiki.md)
-- [Doc](./docs/doc.md)
-- [Messages](./docs/message.md)
-- [Networking](./docs/networking.md)
-- [Command Line](./docs/cli.md)
-- [Analysis](./docs/analysis.md)
-- [Todo](./docs/TODO.md)
-- [Changelog](./docs/changelog.md)
-
 ### References
 - Wiki: https://wiki.bitcoinsv.io
 - Bitcoin Book: https://github.com/bitcoinbook/bitcoinbook
 - https://github.com/rust-in-blockchain/awesome-blockchain-rust
-
-Courtesy to ChatGPT project for assistance with wordings in this documentation.
