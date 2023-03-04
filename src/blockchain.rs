@@ -1,5 +1,6 @@
 use log::info;
 use std::collections::HashMap;
+use bincode::{deserialize, serialize};
 use failure::format_err;
 
 use crate::block::Block;
@@ -60,13 +61,13 @@ impl Blockchain {
 
     /// serializes and inserts block into database
     /// updates the head_hash to point ot this latest block
-    pub fn add_block(&mut self, transactions: Vec<Transaction>) -> Result<(Block), failure::Error> {
-        let new_block = Block::new(transactions, self.curr_hash.clone(), 0)?;
-        self.db.insert(new_block.get_hash(), bincode::serialize(&new_block)?)?;
-        self.db.insert("block_head_hash", new_block.get_hash().as_bytes())?;
-        self.curr_hash = new_block.get_hash();
-        Ok((new_block))
-    }
+    // pub fn add_block(&mut self, transactions: Vec<Transaction>) -> Result<(Block), failure::Error> {
+    //     let new_block = Block::new(transactions, self.curr_hash.clone(), 0)?;
+    //     self.db.insert(new_block.get_hash(), bincode::serialize(&new_block)?)?;
+    //     self.db.insert("block_head_hash", new_block.get_hash().as_bytes())?;
+    //     self.curr_hash = new_block.get_hash();
+    //     Ok((new_block))
+    // }
 
     pub fn iter(&self) -> BlockchainIter {
         BlockchainIter {
@@ -117,6 +118,99 @@ impl Blockchain {
         //     .ok_or_else(|| format_err!("Transaction not found"));
 
         Err(format_err!("Transaction is not found"))
+    }
+
+    pub fn get_block(&self, block_hash: &str) -> Result<Block, failure::Error> {
+        let data = self.db.get(block_hash)?.unwrap();
+        let block = deserialize(&data.to_vec())?;
+        Ok(block)
+    }
+
+    pub fn get_best_height(&self) -> Result<i32, failure::Error> {
+        let lasthash = if let Some(h) = self.db.get("LAST")? {
+            h
+        } else {
+            return Ok(-1);
+        };
+        let last_data = self.db.get(lasthash)?.unwrap();
+        let last_block: Block = deserialize(&last_data.to_vec())?;
+        Ok(last_block.get_height())
+    }
+
+    pub fn get_block_hashs(&self) -> Vec<String> {
+        let mut list = Vec::new();
+        for b in self.iter() {
+            list.push(b.get_hash());
+        }
+        list
+    }
+
+    pub fn verify_transacton(&self, tx: &Transaction) -> Result<bool, failure::Error> {
+        if tx.is_coinbase() {
+            return Ok(true);
+        }
+        let prev_TXs = self.get_prev_TXs(tx)?;
+        tx.verify(prev_TXs)
+    }
+
+    fn get_prev_TXs(&self, tx: &Transaction) -> Result<HashMap<String, Transaction>, failure::Error> {
+        let mut prev_TXs = HashMap::new();
+        for vin in &tx.input {
+            let prev_TX = self.find_transacton(&vin.txid)?;
+            prev_TXs.insert(prev_TX.id.clone(), prev_TX);
+        }
+        Ok(prev_TXs)
+    }
+
+    pub fn find_transacton(&self, id: &str) -> Result<Transaction, failure::Error> {
+        for b in self.iter() {
+            for tx in b.get_transaction() {
+                if tx.id == id {
+                    return Ok(tx.clone());
+                }
+            }
+        }
+        Err(format_err!("Transaction is not found"))
+    }
+
+    pub fn add_block(&mut self, block: Block) -> Result<(), failure::Error> {
+        let data = serialize(&block)?;
+        if let Some(_) = self.db.get(block.get_hash())? {
+            return Ok(());
+        }
+        self.db.insert(block.get_hash(), data)?;
+
+        let lastheight = self.get_best_height()?;
+        if block.get_height() > lastheight {
+            self.db.insert("LAST", block.get_hash().as_bytes())?;
+            self.curr_hash = block.get_hash();
+            self.db.flush()?;
+        }
+        Ok(())
+    }
+
+    pub fn mine_block(&mut self, transactions: Vec<Transaction>) -> Result<Block, failure::Error> {
+        info!("mine a new block");
+
+        for tx in &transactions {
+            if !self.verify_transacton(tx)? {
+                return Err(format_err!("ERROR: Invalid transaction"));
+            }
+        }
+
+        let lasthash = self.db.get("LAST")?.unwrap();
+
+        let newblock = Block::new(
+            transactions,
+            String::from_utf8(lasthash.to_vec())?,
+            self.get_best_height()? + 1,
+        )?;
+        self.db.insert(newblock.get_hash(), serialize(&newblock)?)?;
+        self.db.insert("LAST", newblock.get_hash().as_bytes())?;
+        self.db.flush()?;
+
+        self.curr_hash = newblock.get_hash();
+        Ok(newblock)
     }
 }
 
