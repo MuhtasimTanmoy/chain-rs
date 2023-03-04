@@ -26,7 +26,7 @@ Feel free to give any idea/ suggestions on improvement.
 - [x] Optimize transaction access, currently traverses the complete chain
 - [x] Add caching layer
 - [x] Add networking layer
--  Restructure the project to use different crate for each functionality
+- Restructure the project to use different crate for each functionality
 - Add spec for communication protocol
 - Look at transport medium, grpc?
 - Add separate client to interact with full node
@@ -134,3 +134,5 @@ Nodes will communicate with each other with following types of messages
 - https://github.com/rust-in-blockchain/awesome-blockchain-rust
 - https://github.com/MitchellTesla/Alfa-ROMio
 - https://input-output-hk.github.io/jormungandr
+- https://github.com/JoshOrndorff/blockchain-from-scratch
+- https://github.com/jean553/rust-blockchain
