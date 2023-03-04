@@ -168,7 +168,7 @@ impl Transaction {
         Ok(hasher.result_str())
     }
 
-    pub fn verify(&mut self, prev_TXs: HashMap<String, Transaction>) -> Result<bool, failure::Error> {
+    pub fn verify(&self, prev_TXs: HashMap<String, Transaction>) -> Result<bool, failure::Error> {
         if self.is_coinbase() {
             return Ok(true);
         }
