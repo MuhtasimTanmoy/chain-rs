@@ -2,7 +2,7 @@ use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug,Clone,Serialize,Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MergeTX {}
 
 impl merkle_cbt::merkle_tree::Merge for MergeTX {

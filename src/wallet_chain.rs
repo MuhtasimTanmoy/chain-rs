@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use log::info;
 use crate::wallet::Wallet;
+use log::info;
+use std::collections::HashMap;
 
 pub struct WalletChain {
     wallets: HashMap<String, Wallet>,
@@ -38,11 +38,11 @@ impl WalletChain {
         addresses
     }
 
-    pub fn get_wallet(&self,address: &str)-> Option<&Wallet> {
+    pub fn get_wallet(&self, address: &str) -> Option<&Wallet> {
         self.wallets.get(address)
     }
 
-    pub fn save_all(&self)-> Result<(), failure::Error> {
+    pub fn save_all(&self) -> Result<(), failure::Error> {
         let db = sled::open("data/wallets")?;
         for (address, wallet) in &self.wallets {
             let data = bincode::serialize(wallet)?;
@@ -57,22 +57,22 @@ impl WalletChain {
 #[cfg(test)]
 mod test {
     use bitcoincash_addr::Address;
-    use crypto::ed25519;
-    use rand_core::{OsRng, RngCore};
+
+    use super::*;
     use crate::crypto::{SignerUtil, VerifierUtil};
     use crate::utils::hash_pub_key;
-    use super::*;
+    use rand_core::{OsRng, RngCore};
 
     #[test]
     fn test_create_wallet_and_hash() {
         let w1 = Wallet::new();
         let w2 = Wallet::new();
-        println!("{}",w1.get_address());
-        println!("{}",w2.get_address());
+        println!("{}", w1.get_address());
+        println!("{}", w2.get_address());
 
         let mut p2 = w2.public_key.clone();
         hash_pub_key(&mut p2);
-        assert_eq!(p2.len(),20);
+        assert_eq!(p2.len(), 20);
         let pub_key_hash = Address::decode(&w2.get_address()).unwrap().body;
         assert_eq!(pub_key_hash, p2);
     }
@@ -118,8 +118,8 @@ mod test {
     #[test]
     fn test_signature() {
         use ring_compat::signature::{
-            ed25519::{Signature, SigningKey, VerifyingKey},
-            Signer, Verifier
+            ed25519::{SigningKey, VerifyingKey},
+            Signer, Verifier,
         };
 
         // wallet should provide the public and private key pair. Accommodate it properly
