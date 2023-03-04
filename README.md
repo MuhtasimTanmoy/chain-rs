@@ -127,6 +127,8 @@ Nodes will communicate with each other with following types of messages
     - Nodes version transfer message
 
 ## References
+- Implementation Testing Playground
+    - https://github.com/MuhtasimTanmoy/rust-playground
 - Wiki
   - https://wiki.bitcoinsv.io
 - Bitcoin Book
