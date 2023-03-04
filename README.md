@@ -126,7 +126,11 @@ Nodes will communicate with each other with following types of messages
 - `VersionMessage`
     - Nodes version transfer message
 
-### References
-- Wiki: https://wiki.bitcoinsv.io
-- Bitcoin Book: https://github.com/bitcoinbook/bitcoinbook
+## References
+- Wiki
+  - https://wiki.bitcoinsv.io
+- Bitcoin Book
+  - https://github.com/bitcoinbook/bitcoinbook
 - https://github.com/rust-in-blockchain/awesome-blockchain-rust
+- https://github.com/MitchellTesla/Alfa-ROMio
+- https://input-output-hk.github.io/jormungandr
