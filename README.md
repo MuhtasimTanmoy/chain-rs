@@ -133,6 +133,8 @@ Nodes will communicate with each other with following types of messages
   - https://wiki.bitcoinsv.io
 - Bitcoin Book
   - https://github.com/bitcoinbook/bitcoinbook
+- Course
+    - https://ee374.stanford.edu/protocol
 - https://github.com/rust-in-blockchain/awesome-blockchain-rust
 - https://github.com/MitchellTesla/Alfa-ROMio
 - https://input-output-hk.github.io/jormungandr
