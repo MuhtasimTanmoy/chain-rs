@@ -5,7 +5,6 @@ The project's main objective is to enhance understanding of Rust programming lan
 constructing a system that involves distributed and peer-to-peer networking. The project yet lacks proper 
 documentation, and several implementations are inexperienced and flawed.
 
-
 ### Features
 
 The project's functionality is currently limited, 
@@ -30,6 +29,10 @@ Feel free to give any idea/ suggestions on improvement.
 - Add spec for communication protocol
 - Look at transport medium, grpc?
 - Add separate client to interact with full node
+- Study following concensus algorithm
+    - Standard Nakamoto concensus with longest chain selection rule
+    - [Tree Graph Consensus Algorithm](https://arxiv.org/pdf/1805.03870.pdf) with [GHAST](https://arxiv.org/pdf/2006.01072.pdf) chain selection rule
+
 
 ### Usage
 
@@ -102,6 +105,7 @@ A node is responsible for processing, validating, and relaying the block and its
 node is distinct on the network from miners and wallets.
 
 There will be three types of node
+
 - Central Node
     - Other nodes connect to it, it sends data to others
 - Miner Node
@@ -125,6 +129,8 @@ Nodes will communicate with each other with following types of messages
     - Sent after successful mining
 - `VersionMessage`
     - Nodes version transfer message
+
+
 
 ## References
 - Implementation Testing Playground
