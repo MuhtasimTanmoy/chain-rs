@@ -6,35 +6,7 @@ constructing a system that involves distributed and peer-to-peer networking. The
 documentation, and several implementations are inexperienced and flawed.
 
 
-### Features
-
-The project's functionality is currently limited, 
-and the following tasks are on the `to-do` list to improve it. 
-Feel free to give any idea/ suggestions on improvement.
-
-- [x] Create working chain of blocks
-- [x] Save blocks on SQLite database
-- [x] Set up command line interface
-- [x] Set up transaction
-- [x] Set up genesis block, coinbase transaction
-- [x] Set up wallet
-- [x] Proof of work mining
-- [x] Send transaction from one account to another with hash of public key as address
-- [x] Add signature for transaction input access control
-- [x] Sending transaction, signing with private key
-- [x] Use merkle hash for block fingerprint
-- [x] Optimize transaction access, currently traverses the complete chain
-- [x] Add caching layer
-- [x] Add networking layer
-- Restructure the project to use different crate for each functionality
-- Add spec for communication protocol
-- Look at transport medium, grpc?
-- Add separate client to interact with full node
-- Study following concensus algorithm
-    - Standard Nakamoto concensus with longest chain selection rule
-    - [Tree Graph Consensus Algorithm](https://arxiv.org/pdf/1805.03870.pdf) with [GHAST](https://arxiv.org/pdf/2006.01072.pdf) chain selection rule
-
-### Usage
+### Quickstart
 
 ```
 ## First create a wallet
@@ -73,6 +45,31 @@ Balance of '3JGDNu6Pnuench1hoXyibBemfYjGT8RHRS'; 100
 ## Send money to from one user to another
 cargo run send 3JGDNu6Pnuench1hoXyibBemfYjGT8RHRS  36M6fHwAame68se5hhqG1j2kXRujFCDQhN 10
 ```
+
+### Features
+
+The project's functionality is currently limited, 
+and the following tasks are on the `to-do` list to improve it. 
+Feel free to give any idea/ suggestions on improvement.
+
+- [x] Create working chain of blocks
+- [x] Save blocks on SQLite database
+- [x] Set up command line interface
+- [x] Set up transaction
+- [x] Set up genesis block, coinbase transaction
+- [x] Set up wallet
+- [x] Proof of work mining
+- [x] Send transaction from one account to another with hash of public key as address
+- [x] Add signature for transaction input access control
+- [x] Sending transaction, signing with private key
+- [x] Use merkle hash for block fingerprint
+- [x] Optimize transaction access, currently traverses the complete chain
+- [x] Add networking layer
+- Add caching layer
+- Restructure the project to use different crate for each functionality
+- Add spec for communication protocol
+- Look at transport medium, grpc?
+- Add separate client to interact with full node
 
 ### Docs
 Courtesy to ChatGPT project for assistance with wordings in this documentation.
