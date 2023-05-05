@@ -30,6 +30,9 @@ Feel free to give any idea/ suggestions on improvement.
 - Add spec for communication protocol
 - Look at transport medium, grpc?
 - Add separate client to interact with full node
+- Study following concensus algorithm
+    - Standard Nakamoto concensus with longest chain selection rule
+    - [Tree Graph Consensus Algorithm](https://arxiv.org/pdf/1805.03870.pdf) with [GHAST](https://arxiv.org/pdf/2006.01072.pdf) chain selection rule
 
 ### Usage
 
