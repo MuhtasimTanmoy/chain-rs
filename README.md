@@ -58,16 +58,16 @@ Feel free to give any idea/ suggestions on improvement.
 - [x] Set up transaction
 - [x] Set up genesis block, coinbase transaction
 - [x] Set up wallet
-- [x] Proof of work mining
+- [x] Implement naive Proof of work mining
 - [x] Send transaction from one account to another with hash of public key as address
-- [x] Add signature for transaction input access control
-- [x] Sending transaction, signing with private key
-- [x] Use merkle hash for block fingerprint
-- [x] Optimize transaction access, currently traverses the complete chain
-- [x] Add networking layer
+- [x] Add signature for input access control at the time of making a transaction
+- [x] Send transaction signed with private key
+- [x] Use merkle hash for calculating block fingerprint
+- [x] Optimize transaction access from a particular block, currently traverses the complete chain which is inefficient
+- [x] Add networking layer for communication between clients
 - Add caching layer
 - Restructure the project to use different crate for each functionality
-- Add spec for communication protocol
+- Add specification for communication protocol
 - Look at transport medium, grpc?
 - Add separate client to interact with full node
 
