@@ -1,9 +1,13 @@
 # Experimental Blockchain in Rust
 
-A blockchain implementation written for educational purpose in the Rust programming language that is in the experimental alpha stage.
-The project's main objective is to enhance understanding of Rust programming language fundamentals and best practices by 
-constructing a system that involves distributed and peer-to-peer networking. The project yet lacks proper 
-documentation, and several implementations are inexperienced and flawed.
+A blockchain implementation written for educational purpose in the Rust programming language that is in the experimental alpha stage. The project's main objective is to enhance understanding of Rust programming language fundamentals and best practices by 
+constructing a system that involves distributed and peer-to-peer networking. 
+
+This is all very much work in progress research code. There are a lot of rough edges, some of the code is in need of some serious cleanup, and the packaging/configuration/ documentation doesn't exist that much.
+
+
+
+
 
 
 ### Quickstart
