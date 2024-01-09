@@ -132,6 +132,7 @@ Nodes will communicate with each other with following types of messages
   - https://wiki.bitcoinsv.io
   - https://github.com/chaincodelabs/bitcoin-curriculum
   - https://github.com/chaincodelabs/seminars
+  - https://bitcoinops.org/en/topics
 - Bitcoin Book
   - https://github.com/bitcoinbook/bitcoinbook
 - https://github.com/rust-in-blockchain/awesome-blockchain-rust
