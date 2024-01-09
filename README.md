@@ -1,13 +1,9 @@
-# Experimental Blockchain in Rust
+# Experimental Blockchain in Rust [WIP]
 
 A blockchain implementation written for educational purpose in the Rust programming language that is in the experimental alpha stage. The project's main objective is to enhance understanding of Rust programming language fundamentals and best practices by 
 constructing a system that involves distributed and peer-to-peer networking. 
 
-This is all very much work in progress research code. There are a lot of rough edges, some of the code is in need of some serious cleanup, and the packaging/configuration/ documentation doesn't exist that much.
-
-
-
-
+This is all very much work-in-progress research code. There are a lot of rough edges, some of the code is in need of some  cleanup, and the packaging/configuration/ documentation doesn't exist that much.
 
 
 ### Quickstart
@@ -69,18 +65,17 @@ Feel free to give any idea/ suggestions on improvement.
 - [x] Use merkle hash for calculating block fingerprint
 - [x] Optimize transaction access from a particular block, currently traverses the complete chain which is inefficient
 - [x] Add networking layer for communication between clients
-- Add caching layer
-- Restructure the project to use different crate for each functionality
+- Add a caching layer
+- Restructure the project to use different crates for each functionality
 - Add specification for communication protocol
 - Look at transport medium, grpc?
-- Add separate client to interact with full node
+- Add a separate client to interact with the full node
 
 ### Docs
-Courtesy to ChatGPT project for assistance with wordings in this documentation.
 
 - [Wiki](./docs/wiki.md)
-- [Doc](./docs/doc.md)
-- [Messages](./docs/message.md)
+- [Concepts](./docs/doc.md)
+- [Message Structure](./docs/message.md)
 - [Networking](./docs/networking.md)
 - [Command Line](./docs/cli.md)
 - [Analysis](./docs/analysis.md)
@@ -135,6 +130,8 @@ Nodes will communicate with each other with following types of messages
     - https://github.com/MuhtasimTanmoy/rust-playground
 - Wiki
   - https://wiki.bitcoinsv.io
+  - https://github.com/chaincodelabs/bitcoin-curriculum
+  - https://github.com/chaincodelabs/seminars
 - Bitcoin Book
   - https://github.com/bitcoinbook/bitcoinbook
 - https://github.com/rust-in-blockchain/awesome-blockchain-rust
